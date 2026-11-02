@@ -54,13 +54,16 @@
 
 <script>
 
-function generateMail() {
+async function generateMail() {
 
     const email =
         document.getElementById("email").value;
 
     const purpose =
         document.getElementById("purpose").value;
+
+    const selfie =
+        document.getElementById("selfie").files[0];
 
     if (!email.endsWith("@deloitte.com")) {
 
@@ -71,27 +74,25 @@ function generateMail() {
         return;
     }
 
-    const body =
-`Hello,
+    const formData = new FormData();
 
-QR Code Scanned Successfully.
+    formData.append("email", email);
+    formData.append("purpose", purpose);
+    formData.append("selfie", selfie);
 
-User Email:
-${email}
+    const response = await fetch(
+        "http://127.0.0.1:5000/upload",
+        {
+            method: "POST",
+            body: formData
+        }
+    );
 
-Purpose Of Visit:
-${purpose}
+    const result = await response.json();
 
-Regards,
-QR Registration System`;
+    alert("Upload Successful");
 
-    const mailto =
-`mailto:aiswsj.ext@deloitte.com
-?cc=${encodeURIComponent(email)}
-&subject=${encodeURIComponent("QR Code Scan")}
-&body=${encodeURIComponent(body)}`;
-
-    window.location.href = mailto;
+    console.log(result);
 }
 
 </script>
